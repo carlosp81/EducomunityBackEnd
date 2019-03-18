@@ -38,7 +38,6 @@ function guardarRecursos(req, res) {
 
     var params = req.body;
     var recursoEducativo = new RecursoEducativo();
-    console.log(params)
     if (params.descripcion) {
 
         recursoEducativo.nombre = params.nombre;
@@ -48,9 +47,7 @@ function guardarRecursos(req, res) {
         recursoEducativo.archivo = params.archivo;
         recursoEducativo.categoria = params.categoria;
         recursoEducativo.usuario = req.usuario.sub;
-        recursoEducativo.fuente = req.fuente;
-        recursoEducativo.fecha_inicio = req.fecha_inicio;
-        recursoEducativo.fecha_finalizacion = req.fecha_finalizacion;
+        recursoEducativo.fuente = params.fuente;
         recursoEducativo.recurso_padre = params.recurso_padre; // si no es null es porque es un post o una publi en grupo
         recursoEducativo.cantidadComentarios = params.cantidadComentarios ;
 
@@ -424,18 +421,21 @@ function getRecursosEducativosPorTipo(req, res) {
     } else {
         var tipoRecurso = req.params.tipo;
         RecursoEducativo.find({ tipo_recurso: tipoRecurso }).sort('-fecha_creacion').populate({ path: 'recursoEducativo usuario' }).paginate(page, itemsPerPage, (err, recursoEducativo, total) => {
+
             if (err) return res.status(500).send({ message: 'Error al devolver recurso' });
             if (recursoEducativo == 0) return res.status(404).send({ message: 'No existen recursos educativos de este tipo' });
             return res.status(200).send({
-
                 total_items: total,
                 pages: Math.ceil(total / itemsPerPage),
                 page: page,
                 itemsPerPage: itemsPerPage,
                 recursoEducativo
+                
             });
         });
+
     }
+
 
 }
 
