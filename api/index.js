@@ -1,15 +1,15 @@
 'use strict'
 
 //LIBRERIAS
-var mongoose = require('mongoose');
-var app = require('./app');
+const mongoose = require('mongoose');
+const app = require('./app');
 
 //Puerto donde se ejecuta la aplicación
 var port = 3800;
 
 //conexion a la base de datos
 mongoose.Promise = global.Promise;
-mongoose.connect('mongodb://localhost:27017/QuisDB')
+mongoose.connect('mongodb+srv://dbuis:bucabuca3461@cluster0-gw5al.mongodb.net/test?retryWrites=true', {useNewUrlParser: true})
 .then(() => {
   console.log("la conexión a la base de datos QuisDB se ha realizado correctamente ");
   

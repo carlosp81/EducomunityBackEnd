@@ -1,9 +1,9 @@
 'use strict'
 //LIBRERIAS
-var express = require('express');
-var bodyParser = require('body-parser');
+const express = require('express');
+const bodyParser = require('body-parser');
 
-var app = express();
+const app = express();
 
 //cargar rutas
 var usuario_routes = require('./routes/usuario');
