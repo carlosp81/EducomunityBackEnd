@@ -4,7 +4,7 @@ var express = require('express');
 var api = express.Router();
 
 //Métodos de los controladores del modelo recurso educativo
-var RecursoEducativoController = require('../controllers/recursoEducativo');
+var FechaController = require('../controllers/fecha');
 
 //usa el modelo autenticador
 var md_auth = require('../middlewares/autenticador');

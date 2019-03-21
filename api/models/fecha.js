@@ -8,7 +8,6 @@ var FechaSchema = Schema({
 
     fecha: String,
     descripcion: String,
-    fecha_creacion: String,
  	recurso: { type: Schema.ObjectId, ref: 'RecursoEducativo'}
 });
 

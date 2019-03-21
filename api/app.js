@@ -15,6 +15,7 @@ var comentarioRecurso_routes = require('./routes/comentarioRecurso');
 var notificacion_routes = require('./routes/notificacion');
 var seguidorRecurso_routes = require('./routes/seguidorRecurso');
 var categoria_routes = require('./routes/categoria');
+var fecha_routes = require('./routes/fecha');
 
 //cargar middlewares-metodo que se ejecuta antes de que llegue a un controlador
 //lo que me recibo del navegador
@@ -42,5 +43,7 @@ app.use('/api', comentarioRecurso_routes);
 app.use('/api', notificacion_routes);
 app.use('/api', seguidorRecurso_routes);
 app.use('/api', categoria_routes);
+app.use('/api', fecha_routes);
+
 
 module.exports = app;

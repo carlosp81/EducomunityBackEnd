@@ -8,7 +8,7 @@ var mongoosePaginate = require('mongoose-pagination');
 
 //MODELOS
 var RecursoEducativo = require('../models/recursoEducativo');
-var Fecha = require('../models/Fecha')
+var Fecha = require('../models/fecha')
 
 
 //SERVICIOS
@@ -25,12 +25,10 @@ function guardarFecha(req, res) {
 
     var params = req.body;
     var fecha = new Fecha();
-    console.log(params)
     if (params.descripcion && params.fecha) {
 
         fecha.fecha = params.fecha;
         fecha.descripcion = params.descripcion;
-        fecha.fecha_creacion = moment().unix();
         fecha.recurso = params.recurso;
 
         fecha.save((err, fechaStored) => {
@@ -57,13 +55,14 @@ function getFechaRecurso(req, res) {
     if (req.params.page) {
         page = req.params.page;
     }
-    var itemsPerPage = 10;
-    var recur;
+    var itemsPerPage = 5;
+    var recurso;
     if (req.params.recurso) {
-        recur = req.params.recurso;
+        recurso = req.params.recurso;
+        console.log(recurso)
     }
 
-    Fecha.find({ recurso: recur }).sort('-fecha_creacion').populate('recurso').paginate(page, itemsPerPage, (err, fechas, total) => {
+    Fecha.find({ recurso: recurso }).sort('fecha').paginate(page, itemsPerPage, (err, fechas, total) => {
         if (err) return res.status(500).send({ message: 'Error al devolver las fechas' });
         if (!fechas) return res.status(404).send({ message: 'EL usuario no ha creado fechas en el recurso educativo' });
         return res.status(200).send({
