@@ -14,7 +14,8 @@ const mcc = process.env.MONGO_URI;
 
 if(mcc) {
     mongoose.Promise = global.Promise;
-    mongoose.connect(mcc, {useNewUrlParser: true})
+    mongoose.set('useFindAndModify', false);
+    mongoose.connect(mcc, {useCreateIndex: true, useNewUrlParser: true})
     .then(() => {
       console.log("la conexión a la base de datos QuisDB se ha realizado correctamente ");
       
