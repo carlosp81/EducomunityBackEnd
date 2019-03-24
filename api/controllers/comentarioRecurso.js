@@ -1,10 +1,11 @@
 'use strict'
 
 //LIBRERIAS
-var moment = require('moment');
+const moment = require('moment');
 
 //MODELOS
-var ComentarioRecurso = require('../models/comentarioRecurso');
+const ComentarioRecurso = require('../models/comentarioRecurso');
+const reaccionRecurso = require('../models/reaccionRecurso')
 
 /**
  * Función que permite guardar un comentario
@@ -87,27 +88,63 @@ function getComentariosRecurso(req, res) {
         page = req.params.page;
     }
     
-    ComentarioRecurso.find({ recurso: recursoId }).sort('-fecha_creacion').populate('usuario').paginate(page, itemsPerPage, (err, comentarios, total) => {
-        if (err) return res.status(500).send({ message: 'Error al devolver los comentarios del recurso' });
-        if (!comentarios) return res.status(404).send({ message: 'no hay comentarios en el recurso' });
-        return res.status(200).send({
-            
-            total_items: total,
-            pages: Math.ceil(total / itemsPerPage),
-            page: page,
-            itemsPerPage: itemsPerPage,
-            comentarios
-        });
-    });
+    ComentarioRecurso.find({ recurso: recursoId })
+        .sort('-fecha_creacion')
+        .populate('usuario')
+        .paginate(page, itemsPerPage, (err, comentarios, total) => {
+            if (err) 
+                return 
+                res.status(500)
+                .send({ message: 'Error al devolver los comentarios del recurso' });
+            if (!comentarios) 
+                return 
+                res.status(404).send({ message: 'no hay comentarios en el recurso' });
+                return res.status(200).send({
 
-   
+                    total_items: total,
+                    pages: Math.ceil(total / itemsPerPage),
+                    page: page,
+                    itemsPerPage: itemsPerPage,
+                    comentarios
+                });
+            });   
 }
 
+function reaccionComentario(req, res) {
+    
+    const params = req.body; // parámetros
+    const reaccionRecurso = new ReaccionRecurso();
+    
+    console.log(req)
+    
+    if (params.comentario && params.recurso) {
 
+        // comentarioRecurso.misReacciones = [];
+        reaccionRecurso.usuario = req.usuario.sub;
+        reaccionRecurso.reaccionPositiva = req.reaccionPositiva.sub;
+
+
+        // comentarioRecurso.misReacciones.push({
+        //     id_usuario: reaccionRecurso.usuario,
+        //     reaccionPositiva: reaccionRecurso.reaccionPositiva
+        // })
+
+        reaccionRecurso.save((err, reaccionRecurso) => {
+             if (err) return res.status(500).send({ message: 'Error al dar Me gusta' });
+             if (!reaccionRecurso) return res.status(404).send({ message: 'Tu reaccion no se ha guardado' });
+             return res.status(200).send({
+                    reaccionPositiva: reaccionRecurso
+             });
+         });
+     } else {
+         return res.status(200).send({ message: 'Debes enviar un comentario a un recurso' });
+    }
+}
 
 module.exports = {
     guardarComentarioRecurso,
     eliminarComentarioRecurso,
     updateComentarioRecurso,
-    getComentariosRecurso
+    getComentariosRecurso,
+    reaccionComentario
 }
