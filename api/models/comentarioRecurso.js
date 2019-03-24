@@ -10,11 +10,11 @@ const ComentarioRecursoSchema = Schema({
     fecha_creacion: String,
    	usuario: { type: Schema.ObjectId, ref: 'Usuario'},
     recurso: { type: Schema.ObjectId, ref: 'RecursoEducativo'},
-    misReacciones: [], // Lista de Usuarios que reaccionaron al comentario
-    totalReacciones: Number, // Total de Usuarios en misReacciones      
+    // misReacciones: [], // Lista de Usuarios que reaccionaron al comentario
+    // totalReacciones: Number, // Total de Usuarios en misReacciones      
 });
 
-module.exports = mongoose.model('ComentariosRecurso', ComentarioRecursoSchema);
+module.exports = mongoose.model('ComentarioRecurso', ComentarioRecursoSchema);
 
 // Ejemplo de una lista de misReacciones
 // misReacciones: [

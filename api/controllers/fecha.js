@@ -4,7 +4,7 @@
 var path = require('path');
 var fs = require('fs');
 var moment = require('moment');
-var mongoosePaginate = require('mongoose-pagination');
+var mongoosePaginate = require('mongoose-paginate-v2');
 
 //MODELOS
 var RecursoEducativo = require('../models/recursoEducativo');

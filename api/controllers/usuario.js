@@ -389,7 +389,7 @@ function getFotoFile(req, res){
  * @param {*} res
  */
 function getContadores(req, res){
-    var userId = req.usuario.sub;
+    let userId = req.usuario.sub;    
 
     if(req.params.id){
       userId = req.params.id;

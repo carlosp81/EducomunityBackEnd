@@ -1,10 +1,10 @@
 'use strict'
 
 //LIBRERIAS
-var path = require('path');
-var fs = require('fs');
-var moment = require('moment');
-var mongoosePaginate = require('mongoose-pagination');
+const path = require('path');
+const fs = require('fs');
+const moment = require('moment');
+const mongoosePaginate = require('mongoose-paginate-v2');
 
 //MODELOS
 var RecursoEducativo = require('../models/recursoEducativo');
