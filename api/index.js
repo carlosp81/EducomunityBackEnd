@@ -8,7 +8,7 @@ require('dotenv').config()
 
 //Puerto donde se ejecuta la aplicación
 const port = process.env.PORT;
-const mcc = process.env.MONGO_URI;
+const mcc = process.env.MONGODB_URI;
 
 //conexion a la base de datos
 
