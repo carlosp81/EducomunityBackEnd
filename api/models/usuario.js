@@ -1,10 +1,10 @@
 'use strict'
 
 //LIBRERIAS
-const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
+var mongoose = require('mongoose');
+var Schema = mongoose.Schema;
 
-const UserSchema = Schema({
+var UserSchema = Schema({
   
     nombre: String,
     apellido:String, 

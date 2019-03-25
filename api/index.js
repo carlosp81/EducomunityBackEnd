@@ -15,6 +15,7 @@ const mcc = process.env.MONGO_URI;
 if(mcc) {
     mongoose.Promise = global.Promise;
     mongoose.set('useFindAndModify', false);
+    
     mongoose.connect(mcc, {useCreateIndex: true, useNewUrlParser: true})
     .then(() => {
       console.log("la conexión a la base de datos QuisDB se ha realizado correctamente ");
@@ -24,6 +25,5 @@ if(mcc) {
         console.log("Servidor corriendo en http://localhost:3800");
       });
     })
-} else {
-     console.log('mongoose connection is successful on');
+    .catch(err => console.log(err));
 }

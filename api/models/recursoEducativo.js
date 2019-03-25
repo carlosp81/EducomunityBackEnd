@@ -1,10 +1,10 @@
 'use strict'
 
 //LIBRERIAS
-const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
+var mongoose = require('mongoose');
+var Schema = mongoose.Schema;
 
-const RecursoEducativoSchema = Schema({
+var RecursoEducativoSchema = Schema({
   
     usuario: { type: Schema.ObjectId, ref: 'Usuario'},
     nombre: String,
@@ -18,4 +18,4 @@ const RecursoEducativoSchema = Schema({
  	recurso_padre: { type: Schema.ObjectId, ref: 'RecursoEducativo'} // si es null es: Blog, Evento, grupo o publicacion del muro
 });
 
-module.exports = mongoose.model('RecursoEducativo', RecursoEducativoSchema);
+module.exports = mongoose.model('RecursosEducativo', RecursoEducativoSchema);

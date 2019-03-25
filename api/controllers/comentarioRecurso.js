@@ -1,12 +1,10 @@
 'use strict'
 
 //LIBRERIAS
-const moment = require('moment');
+var moment = require('moment');
 
 //MODELOS
-const ComentarioRecurso = require('../models/comentarioRecurso');
-const reaccionRecurso = require('../models/reaccionRecurso')
-
+var ComentarioRecurso = require('../models/comentarioRecurso');
 
 /**
  * Función que permite guardar un comentario
@@ -16,8 +14,8 @@ const reaccionRecurso = require('../models/reaccionRecurso')
  */
 function guardarComentarioRecurso(req, res) {
 
-    let params = req.body;// parámetros
-    let comentarioRecurso = new ComentarioRecurso();
+    var params = req.body;// parámetros
+    var comentarioRecurso = new ComentarioRecurso();
     console.log(req)
     if (params.comentario && params.recurso) {
 
@@ -36,7 +34,7 @@ function guardarComentarioRecurso(req, res) {
         });
     } else {
         return res.status(200).send({ message: 'Debes enviar un comentario a un recurso' });
-    }  
+    }
 }
 
 /**
@@ -63,8 +61,8 @@ function eliminarComentarioRecurso(req, res) {
  */
 function updateComentarioRecurso(req, res) {
 
-    let comentarioRecursoId = req.params.id;
-    let update = req.body;
+    var comentarioRecursoId = req.params.id;
+    var update = req.body;
 
     if (!update.comentario) { return res.status(200).send({ message: 'Debe ingresar la edición del comentario' }); }
     ComentarioRecurso.findByIdAndUpdate(comentarioRecursoId, update, { new: true }, (err, comentarioUpdate) => {
@@ -81,71 +79,35 @@ function updateComentarioRecurso(req, res) {
  * @param {*} res  respuesta que da al frontend
  */
 function getComentariosRecurso(req, res) {
-    let page = 1;
-    let itemsPerPage = 5;
-    let recursoId = req.params.id;
+    var page = 1;
+    var itemsPerPage = 5;
+    var recursoId = req.params.id;
 
     if (req.params.page) {
         page = req.params.page;
     }
     
-    ComentarioRecurso.find({ recurso: recursoId })
-        .sort('-fecha_creacion')
-        .populate('usuario')
-        .paginate(page, itemsPerPage, (err, comentarios, total) => {
-            if (err) 
-                return 
-                res.status(500)
-                   .send({ message: 'Error al devolver los comentarios del recurso' });
-            if (!comentarios) 
-                return 
-                res.status(404).send({ message: 'no hay comentarios en el recurso' });
-                return res.status(200).send({
+    ComentarioRecurso.find({ recurso: recursoId }).sort('-fecha_creacion').populate('usuario').paginate(page, itemsPerPage, (err, comentarios, total) => {
+        if (err) return res.status(500).send({ message: 'Error al devolver los comentarios del recurso' });
+        if (!comentarios) return res.status(404).send({ message: 'no hay comentarios en el recurso' });
+        return res.status(200).send({
+            
+            total_items: total,
+            pages: Math.ceil(total / itemsPerPage),
+            page: page,
+            itemsPerPage: itemsPerPage,
+            comentarios
+        });
+    });
 
-                    total_items: total,
-                    pages: Math.ceil(total / itemsPerPage),
-                    page: page,
-                    itemsPerPage: itemsPerPage,
-                    comentarios
-                });
-            });   
+   
 }
 
-/* function guardarReaccionComentario(req, res) {
-    
-     const params = req.body; // parámetros
-     const reaccionRecurso = new ReaccionRecurso();
-    
-     console.log(req)
-    
-     if (params.comentario && params.recurso) {
 
-         // comentarioRecurso.misReacciones = [];
-         reaccionRecurso.usuario = req.usuario.id;
-         reaccionRecurso.reaccionPositiva = req.reaccionPositiva.id;
-
-
-         // comentarioRecurso.misReacciones.push({
-         //     id_usuario: reaccionRecurso.usuario,
-         //     reaccionPositiva: reaccionRecurso.reaccionPositiva
-         // })
-
-         reaccionRecurso.save((err, reaccionRecurso) => {
-              if (err) return res.status(500).send({ message: 'Error al dar Me gusta' });
-              if (!reaccionRecurso) return res.status(404).send({ message: 'Tu reaccion no se ha guardado correctamente' });
-              return res.status(200).send({
-                     reaccionPositiva: reaccionRecurso
-              });
-          });
-      } else {
-          return res.status(200).send({ message: 'Debes enviar un comentario a un recurso' });
-     }
-} */
 
 module.exports = {
     guardarComentarioRecurso,
     eliminarComentarioRecurso,
     updateComentarioRecurso,
-    getComentariosRecurso,
-    // reaccionComentario
+    getComentariosRecurso
 }
