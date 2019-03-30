@@ -14,7 +14,7 @@ var multipart = require('connect-multiparty');
 var md_upload = multipart({uploadDir: './uploads/users'});
 
 api.get('/home', UsuarioController.home);
-api.get('/pruebas', md_auth.ensureAuth , UsuarioController.pruebas);
+api.get('/pruebas', md_auth.ensureAuth, UsuarioController.pruebas);
 
 //EL visitante desea crear su cuenta de perfil
 api.post('/registrar', UsuarioController.guardarUsuario);

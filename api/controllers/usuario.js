@@ -1,18 +1,18 @@
 'use strict'
 
 //MODELOS
-var Usuario = require('../models/usuario');
-var Seguidor = require('../models/seguidor');
-var RecursosEducativos = require('../models/recursoEducativo');
+const Usuario = require('../models/usuario');
+const Seguidor = require('../models/seguidor');
+const RecursosEducativos = require('../models/recursoEducativo');
 
 //LIBRERIAS
-var bcrypt = require('bcrypt-nodejs');
-var fs = require('fs');
-var path = require('path');
-var moment = require('moment');
+const bcrypt = require('bcrypt-nodejs');
+const fs = require('fs');
+const path = require('path');
+const moment = require('moment');
 
 //SERVICIOS
-var jwt = require('../services/jwt');
+const jwt = require('../services/jwt');
 
 /**
  * Función de prueba
@@ -68,9 +68,9 @@ function eliminarUsuario(req, res){
  * @param {*} res  respuesta que da al frontend
  */
 function guardarUsuario(req, res){
-       var params = req.body;//recoge los parametros de las peticiones-todos los campos que lleguen por post se guardan en esta variable
+       const params = req.body;//recoge los parametros de las peticiones-todos los campos que lleguen por post se guardan en esta variable
 
-       var usuario = new Usuario();
+       const usuario = new Usuario();
 
        if(params.nombre && params.apellido && params.email && params.password){
 
@@ -124,39 +124,39 @@ function guardarUsuario(req, res){
  * @param {*} req  atributos que recibe del frontend
  * @param {*} res  respuesta que da al frontend
  */
-function loginUsuario(req, res){
-     var params = req.body;
 
-     var email = params.email;
-     var password = params.password;
-
-     Usuario.findOne( { email:email} , (err, usuario) =>{
-        if(err) return res.status(500).send({message: 'Error en la petición'});
-        if(usuario){
-            bcrypt.compare(password, usuario.password, (err, check) =>{
-                if(check){
-
-                    if(params.gettoken){
-                     //devuelve un token
-                     //generar el token
-                     return res.status(200).send({
-                         token: jwt.createToken(usuario)
-                     });
-                    }else{
+const loginUsuario = (req, res) => {
+    const params = req.body;
+    
+    const email = params.email;
+    const password = params.password; // Clave en texto plano - No cifrada
+    
+    Usuario.findOne( { email } , (err, usuario) => {
+        if (err) return res.status(500).send({message: 'Por favor escribe de nuevo tu email'});
+        
+        if (usuario) {
+            bcrypt.compare(password, usuario.password, (err, check) => {
+                if (check) {
+                    if (params.gettoken) {
+                        //devuelve un token
+                        //generar el token
+                        return res.status(200).send({
+                            token: jwt.createToken(usuario)
+                        });
+                    } else {
                     //devolver datos del usuario
                     return res.status(200).send({usuario});
                     }
-
-                }else{
+        
+                } else {
                     return res.status(404).send({message: 'El usuario no se ha podido logear'});
                 }
             });
-
-        }else{
-            return res.status(404).send({message: 'El usuario no se ha podido logear'});
+        
+        } else {
+            return res.status(404).send({message: 'El usuario no se ha registrado'});
         }
-     });
-
+    });
 }
 
 /**
@@ -168,16 +168,19 @@ function loginUsuario(req, res){
 function getUsuario(req, res){
 
     var userId = req.params.id;
+
     Usuario.findById(userId, (err, usuario) => {
-             if(err) return res.status(500).send({message: 'Error en la petición'});
-             if(!usuario) return res.status(400).send({message: 'El usuario no existe'});
-        followThisUser(req.usuario.sub, userId).then((value) => {
-            return res.status(200).send({
-                usuario,
-                seguidor: value.siguiendo,
-                seguido : value.seguido
+             if (err) return res.status(500).send({message: 'Error en la petición'});
+
+             if (!usuario) return res.status(400).send({message: 'El usuario no existe'});
+
+            followThisUser(req.usuario.sub, userId).then((value) => {
+                return res.status(200).send({
+                    usuario,
+                    seguidor: value.siguiendo,
+                    seguido : value.seguido
+                });
             });
-        });
     });
 }
 
@@ -187,29 +190,40 @@ function getUsuario(req, res){
  * @param {*} identity_user_id id del usuario logeado
  * @param {*} user_id id del usuario seguido
  */
-async function followThisUser(identity_user_id, user_id){
-    try {
-        var siguiendo = await Seguidor.findOne({ usuario: identity_user_id, usuario_seguido: user_id}).exec()
-            .then((siguiendo) => {
 
+ const followThisUser = async (identity_user_id, user_id) => {
+    try {
+        let siguiendo = await Seguidor.findOne(
+            {
+                usuario: identity_user_id, 
+                usuario_seguido: user_id
+            })
+            .exec()
+            .then((siguiendo) => {
                 return siguiendo;
             })
-            .catch((err)=>{
+            .catch((err) => {
                 return handleerror(err);
             });
-        var seguido = await Seguidor.findOne({ usuario: user_id, usuario_seguido: identity_user_id}).exec()
-            .then((seguido) => {
 
+        let seguido = await Seguidor.findOne(
+            { 
+                usuario: user_id, 
+                usuario_seguido: identity_user_id
+            })
+            .exec()
+            .then((seguido) => {
                 return seguido;
             })
             .catch((err)=>{
                 return handleerror(err);
             });
         return {
-            siguiendo: siguiendo,
-            seguido: seguido
+            siguiendo,
+            seguido
         }
-    } catch(e){
+    } 
+    catch(e) {
         console.log(e);
     }
 }
@@ -221,29 +235,29 @@ async function followThisUser(identity_user_id, user_id){
  * @param {*} res  respuesta que da al frontend
  */
 function getUsuarios(req, res){
-    var identity_user_id = req.usuario.sub;
-    var page = 1;
-    if(req.params.page){
+    const identity_user_id = req.usuario.sub; // Token del Usuario Logueado - UsuarioPerfil
+    let page = 1;
+    if (req.params.page) {
 
         page = req.params.page;
     }
     var itemsPerPage = 5 ;
 
-    Usuario.find().sort('_id').paginate(page, itemsPerPage, (err, usuarios, total) =>{
-        if(err) return res.status(500).send({message: 'Error en la peticion'});
-        if(!usuarios) return res.status(404).send({ message: 'No hay usuarios disponibles'});
+    Usuario.find().sort('_id')
+                .paginate(page, itemsPerPage, (err, usuarios, total) =>{
+                    if(err) return res.status(500).send({message: 'Error en la peticion'});
+                    if(!usuarios) return res.status(404).send({ message: 'No hay usuarios disponibles'});
 
-        idDeUsuariosSeguidos(identity_user_id).then((value) => {
-            return res.status(200).send({
-                usuarios,
-                seguidores: value.seguidores,
-                usuarios_seguidos: value.seguidos,
-                total,
-                pages: Math.ceil(total/itemsPerPage)
-             });
-        });
-
-    });
+                    idDeUsuariosSeguidos(identity_user_id).then((value) => {
+                        return res.status(200).send({
+                            usuarios,
+                            seguidores: value.seguidores,
+                            usuarios_seguidos: value.seguidos,
+                            total,
+                            pages: Math.ceil(total/itemsPerPage)
+                        });
+                    });
+                });
 }
 
 /**

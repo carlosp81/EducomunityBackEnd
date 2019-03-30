@@ -10,17 +10,18 @@ var Seguidor = require('../models/seguidor');
  * @param {*} res  respuesta que da al frontend
  */
 function saveFollow(req, res){
-    var params = req.body;
-    var seguidor = new Seguidor();
-    seguidor.usuario = req.usuario.sub;
-    seguidor.usuario_seguido = params.usuario_seguido;
+    const params = req.body;
+    const seguidor = new Seguidor();
+
+    seguidor.usuario = req.usuario.sub; // Usuario logueado - con token
+    seguidor.usuario_seguido = params.usuario_seguido; // Usuario visitante - sin token
 
     seguidor.save((err, followStored) => {
 
-        if(err) return res.status(500).send({
+        if (err) return res.status(500).send({
            message: 'Error al guardar el seguimiento'
         });
-        if(!followStored) return res.status(404).send({ message: 'El seguimiento no se ha guardado'});
+        if (!followStored) return res.status(404).send({ message: 'El seguimiento no se ha guardado'});
         return res.status(200).send({seguidor:followStored});
     });
   

@@ -10,4 +10,4 @@ var SeguidorSchema = Schema({
     usuario_seguido: { type: Schema.ObjectId, ref:'Usuario'} //usuario seguido
 });
 
-module.exports = mongoose.model('Seguidore', SeguidorSchema);
+module.exports = mongoose.model('Seguidor', SeguidorSchema);

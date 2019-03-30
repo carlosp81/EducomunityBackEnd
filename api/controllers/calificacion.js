@@ -1,10 +1,10 @@
 'use strict'
 
 //LIBRERIAS
-var moment = require('moment');
+const moment = require('moment');
 
 //MODELOS
-var Calificacion = require('../models/calificacion');
+const Calificacion = require('../models/calificacion');
 
 /**
  * Función de prueba que permite verificar si la ruta funciona correctamente
@@ -25,14 +25,17 @@ function prueba(req, res) {
  */
 function guardarCalificacion(req, res) {
 
-    var params = req.body;
+    const params = req.body;
 
-    if (!params.recurso) return res.status(200).send({ message: 'Debes enviar un recurso' });
-
-    var calificacion = new Calificacion();
-    calificacion.usuario = req.usuario.sub;
-    calificacion.recurso = params.recurso;
+    
+    const calificacion = new Calificacion();
+    
     calificacion.fecha_creacion = moment().unix();
+    calificacion.usuarioId = req.usuario.sub;
+    calificacion.recursoId = params.recursoId;
+    calificacion.active = params.active;
+    
+    if (!params.recursoId) return res.status(200).send({ message: 'Debes enviar un recurso' });
 
     calificacion.save((err, calificacionStored) => {
         if (err) return res.status(500).send({ message: 'Error al guardar la calificacion' });
@@ -43,6 +46,7 @@ function guardarCalificacion(req, res) {
         });
     });
 }
+
 /**
  * Función que permite eliminar la calificación
  * 
@@ -80,9 +84,9 @@ function eliminarCalificacion(req, res) {
  */
 function getRecursosCalificados(req, res) {
 
-    var page = 1;
-    var itemsPerPage = 5;
-    var usuarioId = req.usuario.sub;
+    let page = 1;
+    let itemsPerPage = 5;
+    let usuarioId = req.usuario.sub;
 
     if (req.params.page) {
         page = req.params.page;
@@ -90,7 +94,8 @@ function getRecursosCalificados(req, res) {
     if (req.params.id) {
         usuarioId = req.params.id;
     }
-    Calificacion.find({ usuario: usuarioId }).sort('-fecha_creacion').paginate(page, itemsPerPage, (err, calificados, total) => {
+
+    Calificacion.find({ usuarioId: usuarioId }).sort('-fecha_creacion').paginate(page, itemsPerPage, (err, calificados, total) => {
         if (err) return res.status(500).send({ message: 'Error al devolver recursos calificados' });
         if (!calificados) return res.status(404).send({ message: 'No hay recursos calificados' });
         if (calificados == 0) return res.status(404).send({ message: 'El usuario no tiene recursos calificados' });

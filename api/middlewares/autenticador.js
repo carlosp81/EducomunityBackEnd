@@ -4,7 +4,7 @@ var jwt = require('jwt-simple');
 var moment = require('moment');
 var secret = 'quis';
 
-exports.ensureAuth = function(req, res , next){
+exports.ensureAuth = (req, res , next) => {
 
     if(!req.headers.authorization){
         return res.status(403).send({ message: 'la peticion no tiene la cabecera de autenticacion'});
